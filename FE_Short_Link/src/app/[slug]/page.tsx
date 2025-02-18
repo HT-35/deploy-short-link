@@ -2,9 +2,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import AnimationText from "@/components/title/AnimationText";
+import { listAPi } from "@/utils/ListApi/listAPI";
 
-const Redirect = ({ params }: { params: { slug: string } }) => {
-  console.log("🚀 ~ Redirect ~ params:", params);
+const Redirect = async ({ params }: { params: { slug: string } }) => {
   const box = {
     width: 100,
     height: 100,
@@ -13,6 +13,11 @@ const Redirect = ({ params }: { params: { slug: string } }) => {
     backgroundPosition: "center",
     backgroundSize: "cover",
   };
+
+  const response = await listAPi.getDetailShortLink(params.slug);
+  // const handleRedirect = async () => {
+  //   console.log("🚀 ~ handleRedirect ~ data:", response);
+  // };
 
   return (
     <div className="flex flex-col gap-14 justify-center items-center mt-32">

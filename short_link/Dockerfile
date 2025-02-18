@@ -1,16 +1,31 @@
-# Sử dụng image của OpenJDK 17
-FROM openjdk:17-jdk-slim
+# Sử dụng multi-stage build để giảm kích thước image
+FROM eclipse-temurin:17-jdk AS builder
 
-# Đặt thư mục làm việc trong container
+# Đặt thư mục làm việc
 WORKDIR /app
 
-# Copy file JAR vào container
-COPY build/libs/short_link-0.0.1-SNAPSHOT.jar app.jar
+# Copy toàn bộ source code
+COPY . .
 
-# Expose cổng ứng dụng
+# Cấp quyền thực thi cho gradlew
+RUN chmod +x ./gradlew
+
+# Build ứng dụng với Gradle wrapper
+RUN ./gradlew build -x test --no-daemon
+
+# Stage 2: Runtime
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# Copy JAR từ stage builder
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+# Copy file .env
+COPY .env .
+
+# Expose port
 EXPOSE 4000
-# Copy environment file
-COPY .env /app/.env
 
 # Chạy ứng dụng
 ENTRYPOINT ["java", "-jar", "app.jar"]

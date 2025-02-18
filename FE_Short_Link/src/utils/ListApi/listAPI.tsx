@@ -1,6 +1,7 @@
-const domain = "http://localhost:4000";
+// const domain = "http://localhost:4000";
+const domain = "http://localhost/api";
 
-// const domainCloud = "http://localhost:4000";
+// const domain = "http://backend:4000";
 
 export const listAPi = {
   //  quick create link

@@ -55,8 +55,8 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF nếu dùng API REST
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
-//                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers("/link/quick/**","/auth/**" ).permitAll()
+                    //    .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers("/link/quick/**","/register","/login","/shortlink/**" ).permitAll()
                         .anyRequest().authenticated() // Cho phép tất cả request mà không cần authen
                 )
 

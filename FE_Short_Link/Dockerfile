@@ -1,43 +1,51 @@
+# # Sử dụng hình ảnh Node.js làm hình ảnh nguồn
+# FROM node:20.11.1 AS builder
 
-# Sử dụng Node.js để build frontend
+# # Thiết lập thư mục làm việc
+# WORKDIR /usr/src/app
+
+# # Sao chép package.json và package-lock.json
+# COPY package*.json ./
+
+# # Cài đặt các phụ thuộc
+# RUN npm install
+
+# # Sao chép mã nguồn vào hình ảnh
+# COPY . .
+
+# # Mở cổng mà ứng dụng sẽ chạy
+# EXPOSE 3000
+
+# # Lệnh để chạy ứng dụng
+# CMD ["npm", "start"]
+
+
+
+# Sử dụng Node.js
 FROM node:20.11.1 AS builder
 
-WORKDIR /app
+# Thiết lập thư mục làm việc
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Copy package.json và package-lock.json
 COPY package*.json ./
 
-# Install dependencies
+# Cài đặt dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Sao chép toàn bộ source code vào container
 COPY . .
 
-# Build the application
+# Build production
 RUN npm run build
 
-# Verify the build output directory
-RUN ls -la /app
+# Dùng image Node.js nhỏ hơn để chạy ứng dụng
+FROM node:20.11.1
 
-# Ensure the build directory exists before copying
-RUN if [ -d "/app/.next" ]; then echo "Build directory exists"; else echo "Build directory does not exist"; fi
+WORKDIR /usr/src/app
 
-# Expose the port (if necessary)
-EXPOSE 3000
+# Copy build từ bước trước
+COPY --from=builder /usr/src/app .
 
-# Command to run the application
-CMD ["npm", "start"]
-
-# Giai đoạn chạy app bằng Nginx
-FROM nginx:alpine
-
-# Copy build từ step trước vào Nginx
-COPY --from=builder /app/.next /usr/share/nginx/html
-
-# Expose cổng 3000
-EXPOSE 3000
-
-# Chạy Nginx
-
-
-CMD ["nginx", "-g", "daemon off;"]
+# Chạy ứng dụng production
+CMD ["npm", "run", "start"]

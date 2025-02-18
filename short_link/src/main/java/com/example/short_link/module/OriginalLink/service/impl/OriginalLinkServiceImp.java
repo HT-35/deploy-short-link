@@ -34,6 +34,8 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
     private final ShortLinkService shortLinkService;
     private final UserService userService;
 
+private final  String domain = "http://localhost:3000";
+
 
     public OriginalLinkServiceImp(OriginalLinkRepository originalLinkRepository, ShortLinkService shortLinkService, SecurityContexUtil securityContexUtil, UserService userService, RedisService redisService) {
         this.originalLinkRepository = originalLinkRepository;
@@ -74,6 +76,8 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
      */
     private void validateShortLinkLimit(String UUID) {
         Integer linkCount = redisService.getKeyCount(UUID);
+
+
 
         if (linkCount == null) {
             int dbCount = this.getAllOriginalLinkByUUID(UUID).size();
@@ -228,7 +232,7 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
         this.incrementRedisCounter(UUID, email);
 
 
-        return new ResOriginalLink(reqLinkOriginal.getLink(), "boostech.com/" + randomString, newShortLink.getExpireAt());
+        return new ResOriginalLink(reqLinkOriginal.getLink(), domain+"/" + randomString, newShortLink.getExpireAt());
 
 
     }
@@ -253,7 +257,7 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
         List<OriginalLink> listOriginalLink = this.originalLinkRepository.findByUsers(user);
         return listOriginalLink.stream().map(item -> new ResOriginalLink(
                 item.getOriginalLink(),
-                "localhost:3000/" + item.getShortLink().getUrlShort(),
+                domain+"/" + item.getShortLink().getUrlShort(),
                 item.getShortLink().getExpireAt()
         )).toList();
     }
@@ -286,7 +290,7 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
 
         this.redisService.removekey(keyEmail + email);
 
-        return new ResOriginalLink(originalLink.getOriginalLink(), originalLink.getShortLink().getUrlShort(), originalLink.getShortLink().getExpireAt());
+        return new ResOriginalLink(originalLink.getOriginalLink(), domain+"/" + originalLink.getShortLink().getUrlShort(), originalLink.getShortLink().getExpireAt());
     }
 
 

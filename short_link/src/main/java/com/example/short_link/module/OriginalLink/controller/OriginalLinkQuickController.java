@@ -1,25 +1,36 @@
 package com.example.short_link.module.OriginalLink.controller;
 
 
+import java.util.List;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.short_link.module.OriginalLink.domain.OriginalLink;
 import com.example.short_link.module.OriginalLink.dto.request.ReqLinkOriginal;
 import com.example.short_link.module.OriginalLink.dto.response.ResOriginalLink;
 import com.example.short_link.module.OriginalLink.service.OriginalLinkService;
 import com.example.short_link.shared.annotation.SendMessage;
 import com.example.short_link.shared.error.NotFoundException;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/link/quick")
 public class OriginalLinkQuickController {
 //    private final OriginalLinkServiceImp originalLinkServiceImp;
+
+private static final String DOMAIN = "http://localhost:3000";
 
     private final OriginalLinkService originalLinkService;
 
@@ -62,7 +73,7 @@ public class OriginalLinkQuickController {
             throw new NotFoundException("Not have link");
         }
         List<OriginalLink> listCollection = this.originalLinkService.getAllOriginalLinkByUUID(myCookie);
-        List<ResOriginalLink> resOriginalLink = listCollection.stream().map(item -> new ResOriginalLink(item.getOriginalLink(), "localhost:3000/"+item.getShortLink().getUrlShort(), item.getShortLink().getExpireAt())
+        List<ResOriginalLink> resOriginalLink = listCollection.stream().map(item -> new ResOriginalLink(item.getOriginalLink(), DOMAIN+"/"+item.getShortLink().getUrlShort(), item.getShortLink().getExpireAt())
 
         ).toList();
         return ResponseEntity.ok().body(resOriginalLink);

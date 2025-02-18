@@ -30,7 +30,7 @@ export const sendRequest = async <T,>(props: IRequest) => {
   if (useCredentials) options.credentials = "include";
 
   let url = originalUrl;
-  if (url?.startsWith("localhost")) {
+  if (url?.startsWith("localhost") || url?.startsWith("frontend")) {
     url = `http://${url}`;
   }
 

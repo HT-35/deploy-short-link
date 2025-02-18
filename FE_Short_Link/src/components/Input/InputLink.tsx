@@ -38,34 +38,6 @@ interface ICreateLink {
   // Add other properties as needed
 }
 
-async function checkSafeBrowsing(url: string) {
-  const apiKey = process.env.googleAPIKey;
-  const apiUrl = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${apiKey}`;
-
-  const body = {
-    client: {
-      clientId: "your-client-id",
-      clientVersion: "1.0",
-    },
-    threatInfo: {
-      threatTypes: ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE"],
-      platformTypes: ["ANY_PLATFORM"],
-      threatEntryTypes: ["URL"],
-      threatEntries: [{ url }],
-    },
-  };
-
-  const response = await fetch(apiUrl, {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  const data = await response.json();
-  return data.matches ? true : false;
-}
 const box = {
   width: 100,
   height: 100,
@@ -84,18 +56,19 @@ const InputLink = () => {
   useEffect(() => {
     if (typeof window === undefined) return;
     const getToken = Cookies.get("accessToken");
+    const getCookie = Cookies.get("ShortLinkCookie");
 
     const getListLink = async () => {
-      let response;
+      let response = null;
 
-      if (getToken) {
+      if (getToken !== undefined) {
         response = await sendRequest<IBackendRes<ICreateLink[]>>({
           method: "GET",
           url: listAPi.getAllByEmail(),
           headers: { Authorization: `Bearer ${getToken}` },
         });
         console.log(response);
-      } else {
+      } else if (getCookie !== undefined) {
         response = await sendRequest<IBackendRes<ICreateLink[]>>({
           method: "GET",
           url: listAPi.getAllLinkQuickByUUID(),
@@ -103,7 +76,9 @@ const InputLink = () => {
         });
         console.log(response);
       }
+
       if (
+        response !== null &&
         response.statusCode == 200 &&
         response.data &&
         response.data.length > 0
@@ -129,14 +104,6 @@ const InputLink = () => {
     getListLink();
   }, []);
 
-  checkSafeBrowsing(link).then((isDangerous) => {
-    if (isDangerous) {
-      // console.log("🚨 URL nguy hiểm! Không cho phép tạo short link.");
-    } else {
-      // console.log("✅ URL an toàn, có thể tạo short link.");
-    }
-  });
-
   const handleGetUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLink(e.target.value);
   };
@@ -153,7 +120,7 @@ const InputLink = () => {
 
     let response;
 
-    if (getToken) {
+    if (getToken !== undefined) {
       response = await sendRequest<IBackendRes<ICreateLink>>({
         method: "POST",
         url: listAPi.createShortLink(),
@@ -224,7 +191,7 @@ const InputLink = () => {
     const getToken = Cookies.get("accessToken");
 
     let response;
-    if (getToken) {
+    if (getToken !== undefined) {
       response = await sendRequest<IBackendRes<ICreateLink>>({
         method: "DELETE",
         url: listAPi.deleteLink(getSlug),
