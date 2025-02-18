@@ -1,5 +1,5 @@
 // const domain = "http://localhost:4000";
-const domain = "http://huytranfullstack.id.vn";
+const domain = "http://huytranfullstack.id.vn/api";
 
 // const domain = "http://localhost/api"; // docker
 
