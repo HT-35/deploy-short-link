@@ -6,7 +6,6 @@ import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -55,8 +54,8 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF nếu dùng API REST
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
-                    //    .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers("/link/quick/**","/register","/login","/shortlink/**" ).permitAll()
+                        //    .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers("/link/quick/**", "/auth/register", "/auth/login", "/shortlink/**").permitAll()
                         .anyRequest().authenticated() // Cho phép tất cả request mà không cần authen
                 )
 

@@ -23,21 +23,6 @@ import { Bounce, toast } from "react-toastify";
 
 import Cookies from "js-cookie";
 
-interface ITypeLink {
-  shortLink: string;
-  originalLink: string;
-  click: number;
-  status: string;
-  expireDate: string;
-}
-
-interface ICreateLink {
-  shortLink: string;
-  originalLink: string;
-  expireDate: string;
-  // Add other properties as needed
-}
-
 const box = {
   width: 100,
   height: 100,
@@ -109,9 +94,25 @@ const InputLink = () => {
   };
 
   const handleCreateShortLink = async () => {
+    if (!isValidUrlRegex(link)) {
+      toast.error("Invalid URL", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      return;
+    }
+
     setLoading(true);
 
     const getToken = Cookies.get("accessToken");
+
+    // if (!isValidUrl(link)) {
+    //   toast.error("Invalid URL", {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //   });
+    //   return;
+    // }
 
     const bodyReq = {
       numberCharacer: 5,
@@ -350,3 +351,23 @@ const InputLink = () => {
 };
 
 export default InputLink;
+
+// function isValidUrl(url: string): boolean {
+//   try {
+//     // Nếu không có giao thức, thêm `https://` vào trước
+//     const formattedUrl =
+//       url.startsWith("http://") || url.startsWith("https://")
+//         ? url
+//         : `https://${url}`;
+//     console.log("🚀 ~ isValidUrl ~ formattedUrl:", formattedUrl);
+//     new URL(formattedUrl);
+//     return true;
+//   } catch (e) {
+//     return false;
+//   }
+// }
+
+function isValidUrlRegex(url: string): boolean {
+  const regex = /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/\S*)?$/;
+  return regex.test(url);
+}

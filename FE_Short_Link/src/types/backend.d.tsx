@@ -23,6 +23,24 @@ declare global {
     data?: T;
   }
 
+  interface ITypeLink {
+    shortLink: string;
+    originalLink: string;
+    click: number;
+    status: string;
+    expireDate: string;
+  }
+
+  interface ICreateLink {
+    shortLink: string;
+    originalLink: string;
+    expireDate: string;
+  }
+
+  interface IGetLink {
+    urlShort: string;
+  }
+
   interface ICreateLink {
     shortLink: string;
     originalLink: string;

@@ -1,5 +1,13 @@
 package com.example.short_link.module.OriginalLink.service.impl;
 
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.example.short_link.module.OriginalLink.domain.OriginalLink;
 import com.example.short_link.module.OriginalLink.dto.request.ReqLinkOriginal;
 import com.example.short_link.module.OriginalLink.dto.response.ResOriginalLink;
@@ -13,13 +21,6 @@ import com.example.short_link.module.user.service.UserService;
 import com.example.short_link.shared.error.ExistException;
 import com.example.short_link.shared.error.NotFoundException;
 import com.example.short_link.shared.security.SecurityContexUtil;
-import org.springframework.stereotype.Service;
-
-import java.security.SecureRandom;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OriginalLinkServiceImp implements OriginalLinkService {
@@ -34,7 +35,8 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
     private final ShortLinkService shortLinkService;
     private final UserService userService;
 
-private final  String domain = "http://localhost:3000";
+    // private final  String domain = "http://localhost:3000";
+    private final String domain = "http://huytranfullstack.id.vn";
 
 
     public OriginalLinkServiceImp(OriginalLinkRepository originalLinkRepository, ShortLinkService shortLinkService, SecurityContexUtil securityContexUtil, UserService userService, RedisService redisService) {

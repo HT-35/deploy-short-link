@@ -3,6 +3,7 @@ package com.example.short_link.module.OriginalLink.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -28,9 +29,11 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/link/quick")
 public class OriginalLinkQuickController {
-//    private final OriginalLinkServiceImp originalLinkServiceImp;
 
-private static final String DOMAIN = "http://localhost:3000";
+
+    @Value("${cookie.domain}")
+    private String domain;
+
 
     private final OriginalLinkService originalLinkService;
 
@@ -53,7 +56,7 @@ private static final String DOMAIN = "http://localhost:3000";
                 .httpOnly(false)
                 .path("/")
                 .maxAge(86400)
-                .domain("localhost"); // Chỉ dùng domain "localhost" khi làm việc trên localhost
+                .domain(domain); // Chỉ dùng domain "localhost" khi làm việc trên localhost
 
         // Không sử dụng secure() vì bạn chạy trên HTTP
         ResponseCookie resCookie = cookieBuilder.build();
@@ -73,7 +76,8 @@ private static final String DOMAIN = "http://localhost:3000";
             throw new NotFoundException("Not have link");
         }
         List<OriginalLink> listCollection = this.originalLinkService.getAllOriginalLinkByUUID(myCookie);
-        List<ResOriginalLink> resOriginalLink = listCollection.stream().map(item -> new ResOriginalLink(item.getOriginalLink(), DOMAIN+"/"+item.getShortLink().getUrlShort(), item.getShortLink().getExpireAt())
+        List<ResOriginalLink> resOriginalLink = listCollection.stream().map(item -> new ResOriginalLink(item.getOriginalLink(),
+                domain + "/" + item.getShortLink().getUrlShort(), item.getShortLink().getExpireAt())
 
         ).toList();
         return ResponseEntity.ok().body(resOriginalLink);
