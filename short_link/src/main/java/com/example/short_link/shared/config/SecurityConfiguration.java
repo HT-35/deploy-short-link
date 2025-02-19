@@ -1,8 +1,8 @@
 package com.example.short_link.shared.config;
 
-import com.example.short_link.shared.security.SecurityUtil;
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import com.nimbusds.jose.util.Base64;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +24,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import com.example.short_link.shared.security.SecurityUtil;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import com.nimbusds.jose.util.Base64;
 
 @Configuration
 @EnableWebSecurity
@@ -53,11 +54,14 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF nếu dùng API REST
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(authz -> authz
-                        //    .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers("/link/quick/**", "/auth/register", "/auth/login", "/shortlink/**").permitAll()
-                        .anyRequest().authenticated() // Cho phép tất cả request mà không cần authen
-                )
+                   .authorizeHttpRequests(auth -> auth
+                // Đặt các route public lên đầu
+                .requestMatchers("/auth/login", "/auth/register").permitAll()
+                .requestMatchers("/link/quick/**").permitAll()
+                .requestMatchers("/{shortUrl}").permitAll()
+                // Các route khác yêu cầu xác thực
+                .anyRequest().authenticated()
+            )
 
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))

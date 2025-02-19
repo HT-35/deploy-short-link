@@ -32,7 +32,7 @@ export const sendRequest = async <T,>(props: IRequest) => {
   let url = originalUrl;
   if (
     url?.startsWith("localhost") ||
-    url?.startsWith("huytranfullstack.id.vn")
+    url?.startsWith("huytranfullstack.id.vn/api")
   ) {
     url = `http://${url}`;
   }

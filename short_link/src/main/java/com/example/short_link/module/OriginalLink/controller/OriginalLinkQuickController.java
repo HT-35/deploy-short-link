@@ -31,8 +31,10 @@ import jakarta.validation.Valid;
 public class OriginalLinkQuickController {
 
 
-    @Value("${cookie.domain}")
-    private String domain;
+    // @Value("${cookie.domain}")
+    // private String domain;
+
+    private final String domain = "http://huytranfullstack.id.vn";
 
 
     private final OriginalLinkService originalLinkService;
