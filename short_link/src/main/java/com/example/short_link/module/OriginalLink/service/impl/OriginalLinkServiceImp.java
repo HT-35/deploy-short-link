@@ -1,13 +1,5 @@
 package com.example.short_link.module.OriginalLink.service.impl;
 
-import java.security.SecureRandom;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-
 import com.example.short_link.module.OriginalLink.domain.OriginalLink;
 import com.example.short_link.module.OriginalLink.dto.request.ReqLinkOriginal;
 import com.example.short_link.module.OriginalLink.dto.response.ResOriginalLink;
@@ -21,8 +13,14 @@ import com.example.short_link.module.user.service.UserService;
 import com.example.short_link.shared.error.ExistException;
 import com.example.short_link.shared.error.NotFoundException;
 import com.example.short_link.shared.security.SecurityContexUtil;
-
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OriginalLinkServiceImp implements OriginalLinkService {
@@ -83,17 +81,16 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
      * Kiểm tra và giới hạn số lượng link đã tạo theo UUID
      */
     private void validateShortLinkLimit(String UUID) {
-        Integer linkCount = redisService.getKeyCount(UUID);
+        Integer linkCount = redisService.getKeyCount(keyUUID + UUID);
 
-        
 
         if (linkCount == null) {
             int dbCount = this.getAllOriginalLinkByUUID(UUID).size();
             redisService.saveKey(keyUUID + UUID, dbCount);
-            if (dbCount > 5) {
+            if (dbCount > 2) {
                 throw new ExistException("Bạn đã tạo 3 short link");
             }
-        } else if (linkCount > 5) {
+        } else if (linkCount > 2) {
             throw new ExistException("Bạn đã tạo 3 short link");
         }
 
@@ -118,8 +115,6 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
      * Check User and limit link create max 5 link
      */
     private UserEntity validateAndGetUser(String email) {
-
-        System.out.println(email);
 
         // check count link of user by email
         Integer linkCount = this.redisService.getKeyCount(keyEmail + email);
@@ -305,6 +300,10 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
         originalLinkRepository.flush();
 
         this.redisService.removekey(keyShortLink + Slug);
+
+
+        this.redisService.removekey(UUID == null ? keyEmail + email : keyUUID + UUID);
+
         return new ResOriginalLink(originalLink.getOriginalLink(), domain + "/" + originalLink.getShortLink().getUrlShort(), originalLink.getShortLink().getExpireAt());
     }
 

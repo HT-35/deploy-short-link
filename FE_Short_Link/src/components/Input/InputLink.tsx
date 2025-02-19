@@ -102,17 +102,16 @@ const InputLink = () => {
       return;
     }
 
+    if (!link.startsWith("http") || link.startsWith("https")) {
+      toast.error("Url Missing Protocol Http or Https", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+      return;
+    }
     setLoading(true);
 
     const getToken = Cookies.get("accessToken");
-
-    // if (!isValidUrl(link)) {
-    //   toast.error("Invalid URL", {
-    //     position: "top-right",
-    //     autoClose: 5000,
-    //   });
-    //   return;
-    // }
 
     const bodyReq = {
       numberCharacer: 5,
@@ -141,10 +140,8 @@ const InputLink = () => {
 
     if (response.statusCode == 201) {
       const iosString = response.data?.expireDate;
-
       const date = new Date(iosString || "");
       const formatDate = date.toLocaleDateString("vi-VN");
-
       const newLink: ITypeLink = {
         status: "active",
         click: 0,
@@ -153,9 +150,7 @@ const InputLink = () => {
         expireDate: formatDate || "",
       };
       setListLink((item) => [...item, newLink]);
-
       setLink("");
-
       toast.success("Create Short Link Successful", {
         position: "top-right",
         autoClose: 5000,
@@ -185,7 +180,6 @@ const InputLink = () => {
         transition: Bounce,
       });
     }
-
     setLoading(false);
   };
 
