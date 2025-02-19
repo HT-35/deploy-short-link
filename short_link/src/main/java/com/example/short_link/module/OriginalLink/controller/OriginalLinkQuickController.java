@@ -1,30 +1,20 @@
 package com.example.short_link.module.OriginalLink.controller;
 
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.short_link.module.OriginalLink.domain.OriginalLink;
 import com.example.short_link.module.OriginalLink.dto.request.ReqLinkOriginal;
 import com.example.short_link.module.OriginalLink.dto.response.ResOriginalLink;
 import com.example.short_link.module.OriginalLink.service.OriginalLinkService;
 import com.example.short_link.shared.annotation.SendMessage;
 import com.example.short_link.shared.error.NotFoundException;
-
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/link/quick")
@@ -34,7 +24,8 @@ public class OriginalLinkQuickController {
     // @Value("${cookie.domain}")
     // private String domain;
 
-    private final String domain = "http://huytranfullstack.id.vn";
+    //    private final String domain = "huytranfullstack.id.vn";
+    private final String domain = "localhost";
 
 
     private final OriginalLinkService originalLinkService;

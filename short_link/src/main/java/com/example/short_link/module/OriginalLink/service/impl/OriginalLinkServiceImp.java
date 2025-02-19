@@ -35,9 +35,9 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
     private final ShortLinkService shortLinkService;
     private final UserService userService;
 
-    // private final  String domain = "http://localhost:3000";
+    private final  String domain = "http://localhost:3000";
     // private final  String domain = "http://localhost";           // docker
-    private final String domain = "http://huytranfullstack.id.vn"; // cloud
+    // private final String domain = "http://huytranfullstack.id.vn"; // cloud
 
 
     public OriginalLinkServiceImp(OriginalLinkRepository originalLinkRepository, ShortLinkService shortLinkService, SecurityContexUtil securityContexUtil, UserService userService, RedisService redisService) {

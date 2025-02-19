@@ -56,7 +56,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                     // Đặt các route public lên đầu
-                    .requestMatchers("/auth/**", "/api/auth/**", "/api/link/quick/**", "/api/link/**", "/api/user/**", "/api/shortlink/**").permitAll()
+                    .requestMatchers("/auth/**", "/api/auth/**", "/link/quick/**","/shortlink/**","/api/link/quick/**", "/api/link/**", "/api/user/**", "/api/shortlink/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())

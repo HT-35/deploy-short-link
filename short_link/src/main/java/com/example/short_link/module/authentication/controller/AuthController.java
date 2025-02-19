@@ -1,5 +1,11 @@
 package com.example.short_link.module.authentication.controller;
 
+import com.example.short_link.module.authentication.dto.LoginDTO;
+import com.example.short_link.module.authentication.dto.res.ResLogin;
+import com.example.short_link.module.user.domain.UserEntity;
+import com.example.short_link.module.user.service.UserService;
+import com.example.short_link.shared.security.SecurityUtil;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -13,23 +19,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.short_link.module.authentication.dto.LoginDTO;
-import com.example.short_link.module.authentication.dto.res.ResLogin;
-import com.example.short_link.module.user.domain.UserEntity;
-import com.example.short_link.module.user.service.UserService;
-import com.example.short_link.shared.security.SecurityUtil;
-
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
 
-        // @Value("${cookie.domain}")
-        // private String domain;
+    // @Value("${cookie.domain}")
+    // private String domain;
 
-           private final String domain = "http://huytranfullstack.id.vn";
+    //           private final String domain = "huytranfullstack.id.vn";
+    private final String domain = "localhost";
 
     private final AuthenticationManager authenticationManager;
 
@@ -70,8 +69,7 @@ public class AuthController {
                 .from("accessToken", accessToken)
                 .httpOnly(false).path("/")
                 .maxAge(30 * 24 * 60 * 60)
-                .domain(domain)
-                ;
+                .domain(domain);
 
         // Không sử dụng secure() vì bạn chạy trên HTTP
         ResponseCookie resCookie = cookieBuilder.build();
