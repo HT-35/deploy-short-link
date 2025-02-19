@@ -56,13 +56,9 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                    .authorizeHttpRequests(auth -> auth
                 // Đặt các route public lên đầu
-                .requestMatchers("/auth/login", "/auth/register").permitAll()
-                .requestMatchers("/link/quick/**").permitAll()
-                .requestMatchers("/{shortUrl}").permitAll()
-                // Các route khác yêu cầu xác thực
+                .requestMatchers("/auth/login", "/auth/register", "/api/auth/login", "/api/auth/register", "/api/link/quick/**", "/api/link/**", "/api/user/**", "/api/shortlink/**", "/api/user/me", "/api/link/quick/**").permitAll()
                 .anyRequest().authenticated()
             )
-
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
