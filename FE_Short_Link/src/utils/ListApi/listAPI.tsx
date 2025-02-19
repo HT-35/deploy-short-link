@@ -19,6 +19,7 @@ export const listAPi = {
   // authen
   login: () => `${domain}/auth/login`,
   register: () => `${domain}/auth/register`,
+  logout: () => `${domain}/auth/logout`,
 
   // user
   createUser: () => `${domain}/user`,

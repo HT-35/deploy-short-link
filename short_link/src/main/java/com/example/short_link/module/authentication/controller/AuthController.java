@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import com.example.short_link.module.authentication.dto.LoginDTO;
 import com.example.short_link.module.authentication.dto.res.ResLogin;
 import com.example.short_link.module.user.domain.UserEntity;
 import com.example.short_link.module.user.service.UserService;
+import com.example.short_link.shared.response.RestResponse;
 import com.example.short_link.shared.security.SecurityUtil;
 
 import jakarta.validation.Valid;
@@ -29,7 +31,7 @@ public class AuthController {
     // @Value("${cookie.domain}")
     // private String domain;
 
-              private final String domain = "huytranfullstack.id.vn";
+    private final String domain = "huytranfullstack.id.vn";
     // private final String domain = "localhost";
 
     private final AuthenticationManager authenticationManager;
@@ -66,13 +68,13 @@ public class AuthController {
         resLogin.setData(dataUser);
 
 
-        // Tạo cookie
+ // Tạo cookie
         ResponseCookie.ResponseCookieBuilder cookieBuilder = ResponseCookie
                 .from("accessToken", accessToken)
                 .httpOnly(false).path("/")
                 .maxAge(30 * 24 * 60 * 60)
                 .domain(domain);
-
+                
         // Không sử dụng secure() vì bạn chạy trên HTTP
         ResponseCookie resCookie = cookieBuilder.build();
 
@@ -83,7 +85,18 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<Object> handleRegister(@Valid @RequestBody LoginDTO dataLogin) {
         return ResponseEntity.status(HttpStatus.CREATED.value()).body(this.userService.createUser(dataLogin));
+    }
 
-//        return null;
+    @GetMapping("/logout")
+    public ResponseEntity<Object> handleLogout() {
+        ResponseCookie.ResponseCookieBuilder cookieBuilder = ResponseCookie.from("accessToken", "").httpOnly(false).path("/").maxAge(0).domain(domain);
+
+        ResponseCookie resCookie = cookieBuilder.build();
+        RestResponse<Object> res = new RestResponse<>();
+        res.setStatusCode(HttpStatus.OK.value());
+        res.setMessage("Login Successfully");
+
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, resCookie.toString()).body(res);
     }
 }

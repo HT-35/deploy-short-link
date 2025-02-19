@@ -4,6 +4,8 @@ import { Button } from "../ui/button";
 import { FormAuthen } from "./FormAuthen";
 
 import Cookies from "js-cookie";
+import { sendRequest } from "@/utils/fetchApi";
+import { listAPi } from "@/utils/ListApi/listAPI";
 
 const Authen = () => {
   const [active, setActive] = useState<boolean>(false);
@@ -14,6 +16,18 @@ const Authen = () => {
     const getName = Cookies.get("name");
     setName(getName);
   }, []);
+
+  const handleLogout = async () => {
+    const logout = await sendRequest({
+      url: listAPi.logout(),
+      method: "GET",
+    });
+    console.log(logout);
+    Cookies.remove("name");
+    Cookies.remove("ShortLinkCookie");
+    Cookies.remove("accessToken");
+    window.location.reload();
+  };
 
   return (
     <div>
@@ -37,12 +51,7 @@ const Authen = () => {
           <p>{name}</p>
           <Button
             className="px-5 py-2 rounded-full bg-secondary "
-            onClick={() => {
-              Cookies.remove("name");
-              Cookies.remove("ShortLinkCookie");
-              Cookies.remove("accessToken");
-              window.location.reload();
-            }}
+            onClick={handleLogout}
           >
             Logout
           </Button>
