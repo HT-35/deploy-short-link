@@ -54,11 +54,11 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF nếu dùng API REST
                 .cors(Customizer.withDefaults())
-                   .authorizeHttpRequests(auth -> auth
-                // Đặt các route public lên đầu
-                .requestMatchers("/auth/login", "/auth/register", "/api/auth/login", "/api/auth/register", "/api/link/quick/**", "/api/link/**", "/api/user/**", "/api/shortlink/**", "/api/user/me", "/api/link/quick/**").permitAll()
-                .anyRequest().authenticated()
-            )
+                .authorizeHttpRequests(auth -> auth
+                    // Đặt các route public lên đầu
+                    .requestMatchers("/auth/**", "/api/auth/**", "/api/link/quick/**", "/api/link/**", "/api/user/**", "/api/shortlink/**").permitAll()
+                    .anyRequest().authenticated()
+                )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .formLogin(AbstractHttpConfigurer::disable)
