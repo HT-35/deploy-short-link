@@ -154,6 +154,8 @@ const InputLink = () => {
       };
       setListLink((item) => [...item, newLink]);
 
+      setLink("");
+
       toast.success("Create Short Link Successful", {
         position: "top-right",
         autoClose: 5000,

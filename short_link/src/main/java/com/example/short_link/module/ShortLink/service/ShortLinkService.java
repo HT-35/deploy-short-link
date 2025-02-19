@@ -10,4 +10,6 @@ public interface ShortLinkService {
     ShortLink createShortLink(ShortLink shortLink);
 
     ResShortLinkDTO findShortLink(String link);
+
+    void deleteShortLink(ShortLink shortLink);
 }

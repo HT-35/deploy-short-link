@@ -12,7 +12,7 @@ import { Bounce, toast } from "react-toastify";
 
 const LinkHandler = ({
   data,
-  OriginalLink,
+  OriginalLink = "",
 }: {
   data: string;
   OriginalLink?: string;

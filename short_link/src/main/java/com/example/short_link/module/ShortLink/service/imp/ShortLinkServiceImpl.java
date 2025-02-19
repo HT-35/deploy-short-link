@@ -17,8 +17,8 @@ public class ShortLinkServiceImpl implements ShortLinkService {
     private final ShortLinkRepository shortLinkRepository;
 
 
-    private String keyShortLink = "ShortLink=";
-    private String countAccessShortLink = "CountAccessShortLink=";
+    private final String keyShortLink = "ShortLink=";
+    private final String countAccessShortLink = "CountAccessShortLink=";
 
     public ShortLinkServiceImpl(ShortLinkRepository shortLinkRepository, RedisService redisService) {
         this.shortLinkRepository = shortLinkRepository;
@@ -73,7 +73,13 @@ public class ShortLinkServiceImpl implements ShortLinkService {
 
 
     public boolean checkExistShortLink(String shortLink) {
-        return this.shortLinkRepository.findByUrlShort(shortLink).isPresent() ?true :false;
+        return this.shortLinkRepository.findByUrlShort(shortLink).isPresent() ? true : false;
+    }
+
+
+    public void deleteShortLink(ShortLink shortLink) {
+        this.shortLinkRepository.delete(shortLink);
+
     }
 
 }

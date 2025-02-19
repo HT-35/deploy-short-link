@@ -22,12 +22,17 @@ import com.example.short_link.shared.error.ExistException;
 import com.example.short_link.shared.error.NotFoundException;
 import com.example.short_link.shared.security.SecurityContexUtil;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class OriginalLinkServiceImp implements OriginalLinkService {
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     public static String keyEmail = "email:";
     public static String keyUUID = "UUID:";
+
+    private final String keyShortLink = "ShortLink=";
+
     private final OriginalLinkRepository originalLinkRepository;
     private final SecureRandom secureRandom = new SecureRandom();
     private final SecurityContexUtil securityContexUtil;
@@ -80,7 +85,7 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
     private void validateShortLinkLimit(String UUID) {
         Integer linkCount = redisService.getKeyCount(UUID);
 
-
+        
 
         if (linkCount == null) {
             int dbCount = this.getAllOriginalLinkByUUID(UUID).size();
@@ -235,7 +240,7 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
         this.incrementRedisCounter(UUID, email);
 
 
-        return new ResOriginalLink(reqLinkOriginal.getLink(), domain+"/" + randomString, newShortLink.getExpireAt());
+        return new ResOriginalLink(reqLinkOriginal.getLink(), domain + "/" + randomString, newShortLink.getExpireAt());
 
 
     }
@@ -260,16 +265,18 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
         List<OriginalLink> listOriginalLink = this.originalLinkRepository.findByUsers(user);
         return listOriginalLink.stream().map(item -> new ResOriginalLink(
                 item.getOriginalLink(),
-                domain+"/" + item.getShortLink().getUrlShort(),
+                domain + "/" + item.getShortLink().getUrlShort(),
                 item.getShortLink().getExpireAt()
         )).toList();
     }
 
 
     @Override
+    @Transactional
     public ResOriginalLink deleteOriginalLink(String UUID, String Slug) {
         String email = null;
         List<OriginalLink> listOriginalLink = null;
+
 
         if (UUID == null) {
             email = this.getEmail();
@@ -282,18 +289,23 @@ public class OriginalLinkServiceImp implements OriginalLinkService {
         Long idLinks = listOriginalLink.stream().filter(item -> item.getShortLink() != null && item.getShortLink().getUrlShort().equals(Slug)).map(item -> item.getShortLink().getId()).findFirst().orElse(null);
 
 
-        OriginalLink originalLink = listOriginalLink.stream().filter(item -> item.getShortLink() != null && idLinks != null && idLinks.equals(item.getShortLink().getId())).findFirst().orElse(null);
+        OriginalLink originalLink = listOriginalLink.stream().filter(item -> item.getShortLink() != null
+                && idLinks != null
+                && idLinks.equals(item.getShortLink().getId())).findFirst().orElse(null);
 
 
         if (idLinks == null || originalLink == null) {
             throw new NotFoundException("Not Found Link");
         }
 
+        this.shortLinkService.deleteShortLink(originalLink.getShortLink());
+        originalLinkRepository.flush();
+
         this.originalLinkRepository.deleteById(idLinks);
+        originalLinkRepository.flush();
 
-        this.redisService.removekey(keyEmail + email);
-
-        return new ResOriginalLink(originalLink.getOriginalLink(), domain+"/" + originalLink.getShortLink().getUrlShort(), originalLink.getShortLink().getExpireAt());
+        this.redisService.removekey(keyShortLink + Slug);
+        return new ResOriginalLink(originalLink.getOriginalLink(), domain + "/" + originalLink.getShortLink().getUrlShort(), originalLink.getShortLink().getExpireAt());
     }
 
 

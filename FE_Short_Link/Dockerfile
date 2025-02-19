@@ -1,28 +1,38 @@
-# # Sử dụng hình ảnh Node.js làm hình ảnh nguồn
+
+# # Sử dụng Node.js
 # FROM node:20.11.1 AS builder
 
 # # Thiết lập thư mục làm việc
 # WORKDIR /usr/src/app
 
-# # Sao chép package.json và package-lock.json
+# # Copy package.json và package-lock.json
 # COPY package*.json ./
 
-# # Cài đặt các phụ thuộc
+# # Cài đặt dependencies
 # RUN npm install
 
-# # Sao chép mã nguồn vào hình ảnh
+# # Sao chép toàn bộ source code vào container
 # COPY . .
 
-# # Mở cổng mà ứng dụng sẽ chạy
-# EXPOSE 3000
+# # Build production
+# RUN npm run build
 
-# # Lệnh để chạy ứng dụng
-# CMD ["npm", "start"]
+# # Dùng image Node.js nhỏ hơn để chạy ứng dụng
+# FROM node:20.11.1
 
+# WORKDIR /usr/src/app
 
+# # Copy build từ bước trước
+# COPY --from=builder /usr/src/app .
 
-# Sử dụng Node.js
-FROM node:20.11.1 AS builder
+# # Chạy ứng dụng production
+# # CMD ["npm", "run", "start"]
+
+# ENTRYPOINT ["sh", "-c", "npm run build && npm run start"]
+
+# =============================================================================================
+# Sử dụng Node.js 20
+FROM node:20.11.1 AS runner
 
 # Thiết lập thư mục làm việc
 WORKDIR /usr/src/app
@@ -33,19 +43,8 @@ COPY package*.json ./
 # Cài đặt dependencies
 RUN npm install
 
-# Sao chép toàn bộ source code vào container
+# Sao chép toàn bộ source code
 COPY . .
 
-# Build production
-RUN npm run build
-
-# Dùng image Node.js nhỏ hơn để chạy ứng dụng
-FROM node:20.11.1
-
-WORKDIR /usr/src/app
-
-# Copy build từ bước trước
-COPY --from=builder /usr/src/app .
-
-# Chạy ứng dụng production
-CMD ["npm", "run", "start"]
+# Cấu hình để build lại mỗi lần container chạy
+ENTRYPOINT ["sh", "-c", "npm install && npm run build && npm run start"]
