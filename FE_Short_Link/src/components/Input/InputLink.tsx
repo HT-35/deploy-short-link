@@ -102,7 +102,7 @@ const InputLink = () => {
       return;
     }
 
-    if (!link.startsWith("http") || link.startsWith("https")) {
+    if (!link.startsWith("http") && !link.startsWith("https")) {
       toast.error("Url Missing Protocol Http or Https", {
         position: "top-right",
         autoClose: 5000,
